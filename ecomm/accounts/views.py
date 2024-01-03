@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate , login , logout
 from django.http import HttpResponseRedirect,HttpResponse
-# Create your views here.
 from .models import Profile
 
 
@@ -72,5 +71,5 @@ def activate_email(request , email_token):
         user.save()
         return redirect('/')
     except Exception as e:
-        return HttpResponse('Invalid Email token')
+        return HttpResponse('Geçersiz email')
 
