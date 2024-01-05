@@ -21,6 +21,8 @@ class ColorVariant(BaseModel):
 
     def __str__(self) -> str:
         return self.color_name
+    
+    
 
 
 class SizeVariant(BaseModel):
@@ -42,12 +44,20 @@ class Product(BaseModel):
     slug=models.SlugField(unique=True,null=True,blank=True)
     color_variant=models.ManyToManyField(ColorVariant,blank=True)
     size_variant=models.ManyToManyField(SizeVariant,blank=True)
-
+    discount_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
     def save(self,*args,**kwargs):
         self.slug=slugify(self.product_name)
         super(Product,self).save(*args,**kwargs)
 
+    
+    
+    def get_product_price_by_size(self, size):
+        try:
+            size_variant = SizeVariant.objects.get(size_name=size)
+            return size_variant.price
+        except SizeVariant.DoesNotExist:
+            return self.price
     def __str__(self) -> str:
         return self.product_name
 
