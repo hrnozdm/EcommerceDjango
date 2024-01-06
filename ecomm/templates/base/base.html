@@ -85,7 +85,7 @@ $(document).ready(function() {
 			<div class="col-lg-4 col-sm-6 col-8">
 				<div class="widgets-wrap float-md-right">
 					<div class="widget-header  mr-3">
-						<a href="#" class="icon icon-sm rounded-circle border"><i class="fa fa-shopping-cart"></i></a>
+						<a href="{% url 'cart' %}" class="icon icon-sm rounded-circle border"><i class="fa fa-shopping-cart"></i></a>
 						<span class="badge badge-pill badge-danger notify">{{request.user.profile.get_cart_count}}</span>
 					</div>
 					<div class="widget-header icontext">
@@ -93,8 +93,8 @@ $(document).ready(function() {
 						<div class="text">
 							<span class="text-muted">Welcome!</span>
 							<div> 
-								<a href="#">Sign in</a> |  
-								<a href="#"> Register</a>
+								<a href="{% url 'login' %}">Sign in</a> |  
+								<a href="{% url 'register' %}"> Register</a>
 							</div>
 						</div>
 					</div>
