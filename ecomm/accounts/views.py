@@ -17,21 +17,21 @@ def login_page(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        user_obj = User.objects.filter(username=email)
+        user_obj = User.objects.filter(email=email)
 
         if not user_obj.exists():
             messages.warning(request, 'Bu şekilde bir hesap yok')
             return HttpResponseRedirect(request.path_info)
 
-       
+        user_obj = authenticate(request, username=email, password=password)
 
-        user_obj = authenticate(username=email, password=password)
         if user_obj:
             login(request, user_obj)
             messages.success(request, 'Giriş Başarılı')
             return redirect('/')
-        messages.warning(request, 'Invalid credentials')
-        return HttpResponseRedirect(request.path_info)
+        else:
+            messages.warning(request, 'Geçersiz kimlik bilgileri')
+            return HttpResponseRedirect(request.path_info)
 
     return render(request, 'accounts/login.html')
 
