@@ -1,8 +1,6 @@
-<!-- templates/accounts/cart.html -->
+{% extends "base/base.html" %}
 
-{% extends "base/base.html"%}
-
-{%  block start %}
+{% block start %}
 
 <section class="section-content padding-y bg">
     <div class="container">
@@ -11,50 +9,52 @@
     <div class="card">
         <div class="row no-gutters">
             <aside class="col-md-6">
-                <article class="gallery-wrap"> 
-                    <div class="img-big-wrap">
-                        <div> <a href="#"><img src="/media/{{product.product_images.first.image}}"></a></div>
-                    </div> <!-- slider-product.// -->
-                    <div class="thumbs-wrap">
+                <div id="product-carousel" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
                         {% for image in product.product_images.all %}
-                            <a href="#" class="item-thumb"> <img src="/media/{{image.image}}"></a>
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <img src="/media/{{ image.image }}" class="d-block w-100" alt="{{ product.product_name }}">
+                            </div>
                         {% endfor %}
-                    </div> <!-- slider-nav.// -->
-                </article> <!-- gallery-wrap .end// -->
+                    </div>
+                    <a class="carousel-control-prev" href="#product-carousel" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#product-carousel" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
             </aside>
             <main class="col-md-6 border-left">
                 <article class="content-body">
     
-                    <h2 class="title">{{product.product_name}}</h2>
+                    <h2 class="title">{{ product.product_name }}</h2>
     
                     <div class="rating-wrap my-3">
-                        <ul class="rating-stars">
-                            <li style="width:80%" class="stars-active"> 
-                                <i class="fa fa-star"></i> <i class="fa fa-star"></i> 
-                                <i class="fa fa-star"></i> <i class="fa fa-star"></i> 
-                                <i class="fa fa-star"></i> 
+                        <ul class="list-unstyled">
+                            <li class="bg-warning rounded">
+                                <i class="fa fa-star"></i> <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i> <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
                             </li>
-                            <li>
-                                <i class="fa fa-star"></i> <i class="fa fa-star"></i> 
-                                <i class="fa fa-star"></i> <i class="fa fa-star"></i> 
-                                <i class="fa fa-star"></i> 
-                            </li>
+                            <li class="text-muted">132 reviews</li>
+                            <li class="text-success"><i class="fa fa-clipboard-check"></i> 154 orders </li>
                         </ul>
-                        <small class="label-rating text-muted">132 reviews</small>
-                        <small class="label-rating text-success"> <i class="fa fa-clipboard-check"></i> 154 orders </small>
                     </div> <!-- rating-wrap.// -->
     
-                    <div class="price-wrap"> 
-                        <var class="price">
+                    <div class="price-wrap">
+                        <span class="price">
                             {% if updated_price %}
                                 {{ updated_price }}
                             {% else %}
                                 {{ product.price }}
                             {% endif %}
-                        </var>
+                        </span>
                     </div> <!-- price-wrap .// -->
     
-                    <p>{{product.product_description}}</p>
+                    <p>{{ product.product_description }}</p>
     
                     <dl class="row">
                         <dt class="col-sm-3">Model#</dt>
@@ -69,40 +69,36 @@
     
                     <hr>
                     <div class="form-row">
-                        <div class="form-group col-md flex-grow-0">
-                            <label>Quantity</label>
-                            <div class="input-group mb-3 input-spinner">
+                        <div class="form-group col-md-4">
+                            <label for="quantity-input">Quantity</label>
+                            <div class="input-group">
                                 <div class="input-group-prepend">
-                                    <button class="btn btn-light" type="button" id="button-plus"> + </button>
+                                    <button class="btn btn-light" type="button" id="button-minus"> - </button>
                                 </div>
                                 <input id="quantity-input" type="text" class="form-control" value="1">
                                 <div class="input-group-append">
-                                    <button class="btn btn-light" type="button" id="button-minus"> − </button>
+                                    <button class="btn btn-light" type="button" id="button-plus"> + </button>
                                 </div>
                             </div>
                         </div> <!-- col.// -->
                         {{selected_size}}
                         {% if product.size_variant.count %}
-                        <div class="form-group col-md">
-                                <label>Select size</label>
-                                <div class="mt-1">
+                        <div class="form-group col-md-4">
+                            <label for="select-size">Select size</label>
+                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                 {% for size in product.size_variant.all %}
-                                
-                                    <label class="custom-control custom-radio custom-control-inline">
-                                    <input onchange="get_correct_price('{{size.size_name}}')" type="radio" name="select_size" {% if selected_size == size.size_name %} checked {% endif %} class="custom-control-input">
-    
-                                    <div class="custom-control-label">{{size.size_name}}</div>
+                                    <label class="btn btn-outline-secondary {% if selected_size == size.size_name %}active{% endif %}">
+                                        <input type="radio" name="select_size" onchange="get_correct_price('{{size.size_name}}')">
+                                        {{size.size_name}}
                                     </label>
-    
                                 {% endfor %}
-    
-                                </div>
+                            </div>
                         </div>
                         {% endif %}
                         <!-- col.// -->
                     </div> <!-- row.// -->
     
-                    <a href="#" class="btn  btn-primary"> Buy now </a>
+                    <a href="#" class="btn btn-primary"> Buy now </a>
                     <a href="{% url 'add_to_cart' product.uid %}?variant={{selected_size}}" class="btn btn-outline-primary"> <span class="text">Add to cart</span> <i class="fas fa-shopping-cart"></i>  </a>
 
                 </article> <!-- product-info-aside .// -->
@@ -140,6 +136,5 @@
         }
     });
 </script>
-
 
 {% endblock %}

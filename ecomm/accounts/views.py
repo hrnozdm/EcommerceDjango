@@ -23,9 +23,7 @@ def login_page(request):
             messages.warning(request, 'Bu şekilde bir hesap yok')
             return HttpResponseRedirect(request.path_info)
 
-        if not user_obj[0].profile.is_email_verified:
-            messages.warning(request, 'Hesap doğrulanamıyor')
-            return HttpResponseRedirect(request.path_info)
+       
 
         user_obj = authenticate(username=email, password=password)
         if user_obj:

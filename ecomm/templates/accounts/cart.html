@@ -1,52 +1,54 @@
-<!-- templates/accounts/cart.html -->
-
 {% extends "base/base.html" %}
 
 {% block start %}
+<script>
+    function submit(){
+     console.log("calıştı")
+    if($("#input").val()="sepete100"){
+            $("#discount").val()-=100;
+        }
+    }
+</script>
 <section class="section-content padding-y">
     <div class="container">
         <div class="row">
             <main class="col-md-9">
                 <div class="card">
-                    <table class="table table-borderless table-shopping-cart">
-                        <thead class="text-muted">
-                            <tr class="small text-uppercase">
+                    <table class="table table-bordered table-hover shopping-cart">
+                        <thead>
+                            <tr class="text-uppercase">
                                 <th scope="col">Product</th>
-                               
-                                <th scope="col" width="120">Price</th>
-                                <th scope="col" class="text-right" width="200"> </th>
+                                <th scope="col">Size</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col" class="text-right">Total</th>
+                                <th scope="col" class="text-right">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for cart_detail in cart_details %}
                                 {% for cart_item in cart_detail.cart_items %}
                                     <tr>
-                                        <td>
-                                            <figure class="itemside">
-                                                <div class="aside"><img src="{{ cart_item.product.product_images.first.image.url }}" class="img-sm"></div>
-                                            </figure>
-                                            <figcaption class="info">
-                                                <a href="#" class="title text-dark">{{ cart_item.product.product_name }}</a>
-                                                {% if cart_item.size_variant %}
-                                                    <p class="text-muted small">Size: {{cart_item.size_variant.size_name}}</p>
-                                                {% endif %}
-                                            </figcaption>
+                                        <td class="align-middle">
+                                            <div class="media">
+                                                <img src="{{ cart_item.product.product_images.first.image.url }}" alt="{{ cart_item.product.product_name }}" class="mr-3 img-fluid cart-image">
+                                                <div class="media-body">
+                                                    <h6 class="mt-0"><a href="#" class="text-dark">{{ cart_item.product.product_name }}</a></h6>
+                                                </div>
+                                            </div>
                                         </td>
-                                       
-                                        <td> 
-                                            <div class="price-wrap"> 
-                                                <var class="price">
-                                                    {% if cart_item.size_variant %}
-                                                        {{ cart_item.get_total_price|floatformat:2 }}
-                                                    {% else %}
-                                                        {{ cart_item.get_product_price|floatformat:2 }}
-                                                    {% endif %}
-                                                </var>
-                                            </div> <!-- price-wrap .// -->
+                                        <td class="align-middle">
+                                            {% if cart_item.size_variant %}
+                                                {{ cart_item.size_variant.size_name }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
                                         </td>
-
-                                        <td class="text-right">
-                                            <a href="{%url 'remove_cart' cart_item.uid%}" class="btn btn-light">Remove</a>
+                                        <td class="align-middle">{{ cart_item.get_product_price|floatformat:2 }}</td>
+                                        <td class="align-middle">{{ cart_item.quantity }}</td>
+                                        <td class="text-right align-middle" id="discount">{{ cart_item.get_total_price|floatformat:2 }}</td>
+                                        <td class="text-right align-middle">
+                                            <a href="{% url 'remove_cart' cart_item.uid %}" class="btn btn-danger btn-sm">Remove</a>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -54,7 +56,7 @@
                         </tbody>
                     </table>
                     <div class="card-body border-top">
-                        <a href="#" class="btn btn-primary float-md-right"> Make Purchase <i class="fa fa-chevron-right"></i> </a>
+                        <a href="#" class="btn btn-success float-md-right"> Make Purchase <i class="fa fa-chevron-right"></i> </a>
                         <a href="#" class="btn btn-light"> <i class="fa fa-chevron-left"></i> Continue shopping </a>
                     </div>
                 </div> <!-- card.// -->
@@ -65,15 +67,21 @@
             <aside class="col-md-3">
                 <div class="card mb-3">
                     <div class="card-body">
-                        <form>
+                        <form method="POST">
+                            {% include "base/alert.html" %}
+                            {% csrf_token %}
                             <div class="form-group">
                                 <label>Have coupon?</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" name="" placeholder="Coupon code">
-                                    <span class="input-group-append"> 
-                                        <button class="btn btn-primary">Apply</button>
-                                    </span>
+                                    <input type="text" class="form-control" name="coupon" placeholder="Coupon code" id="input">
+<span class="input-group-append"> 
+    <button type="button" class="btn btn-primary" onclick="submitCoupon()">Apply</button>
+    <br>
+    
+</span>
+
                                 </div>
+                                <span style="font-size:14px;padding-top:20px" id="span" class="text-danger"></span>
                             </div>
                         </form>
                     </div> <!-- card-body.// -->
@@ -82,7 +90,7 @@
                     <div class="card-body">
                         <dl class="dlist-align">
                             <dt>Total:</dt>
-                            <dd class="text-right h5"><strong>{{total_price}}</strong></dd>
+                            <dd class="text-right h5"><strong id="total">{{ total_price }}</strong></dd>
                         </dl>
                         <hr>
                         <p class="text-center mb-3">
@@ -94,4 +102,26 @@
         </div>
     </div> <!-- container .//  -->
 </section>
+
+<script>
+    function submitCoupon() {
+        var input = document.getElementsByName("coupon")[0].value;
+        if (input === "sepete100") {
+            document.getElementById("span").innerText=""
+            document.getElementsByName("coupon")[0].value=""
+            console.log("Coupon code applied successfully!");
+
+            document.getElementById("total").innerText-=100
+                var total=document.getElementById("total").innerText
+            console.log(total)
+        } else {
+            console.log("Invalid coupon code.");
+            document.getElementById("span").innerText="Geçersiz Kupon Kodu!"
+        }
+    }
+    
+</script>
+
 {% endblock %}
+
+

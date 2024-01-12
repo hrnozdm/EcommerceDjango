@@ -1,0 +1,24 @@
+/* cart.css */
+
+/* Ürün kartları için stil kuralları */
+.table-shopping-cart .itemside .aside img {
+    max-width: 70px; /* Örneğin, ürün resimlerinin maksimum genişliği */
+}
+
+.table-shopping-cart .info .title {
+    font-weight: bold; /* Örneğin, ürün adları için kalın yazı tipi */
+}
+
+/* Sepet tablosu genelinde stil kuralları */
+.table-shopping-cart tbody tr {
+    border-bottom: 1px solid #ddd; /* Satırlar arasında sınır çizgisi */
+}
+
+.table-shopping-cart .btn-light {
+    background-color: #f0f0f0; /* "Remove" butonu için arka plan rengi */
+}
+
+.table-shopping-cart .btn-primary {
+    background-color: #007bff; /* "Make Purchase" butonu için arka plan rengi */
+    color: #fff; /* "Make Purchase" butonu için metin rengi */
+}

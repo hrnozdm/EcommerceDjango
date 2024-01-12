@@ -1,0 +1,45 @@
+<!-- templates/search_product.html -->
+
+{% extends "base/base.html" %}
+
+{% block start %}
+
+<div class="container mt-5 pt-5">
+    <form id="searchForm" action="{% url 'search_product' %}" method="GET" class="form-inline my-2 my-lg-0">
+        <input id="searchInput" type="text" name="search_query" class="form-control" placeholder="Search">
+        <button class="btn btn-primary" type="submit">
+            <i class="fa fa-search"></i>
+        </button>
+    </form>
+
+    <div class="row">
+        {% for product in products %}
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <div style="height: 200px; overflow: hidden;">
+                        <img src="/media/{{ product.product_images.first.image }}" class="card-img-top w-100" alt="{{ product.product_name }}">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.product_name }}</h5>
+                        <p class="card-text">${{ product.price }}.00</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a href="{% url 'get_product' product.slug %}" class="btn btn-sm btn-outline-secondary">View Details</a>
+                            </div>
+                            <small class="text-muted">In Stock</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    // JavaScript ile arama kutusuna her yazıldığında formu submit etme
+    document.getElementById('searchInput').addEventListener('input', function() {
+        document.getElementById('searchForm').submit();
+    });
+</script>
+
+{% endblock %}

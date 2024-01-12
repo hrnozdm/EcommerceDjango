@@ -1,6 +1,7 @@
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from products.models import Product
-
+from django.template.loader import render_to_string
 
 def get_product(request, slug):
     try:
@@ -15,6 +16,8 @@ def get_product(request, slug):
        return render(request, 'product/product.html', context=context)
     except Exception as e:
         print(e)
+
+
 
 
 
