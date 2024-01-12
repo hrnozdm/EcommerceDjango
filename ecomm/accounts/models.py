@@ -33,7 +33,7 @@ class CartItems(BaseModel):
     quantity = models.PositiveIntegerField(default=1)
 
     def get_product_price(self):
-        price = [self.product.price]
+        price = [self.product.price if self.product else 0]
 
         if self.color_variant:
             color_variant_price = self.color_variant.price

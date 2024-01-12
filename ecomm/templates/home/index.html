@@ -2,25 +2,137 @@
 {% extends "base/base.html" %}
 
 {% block start %}
-<div class="container mt-5 pt-5">
-    <div class="col-lg-6 col-sm-12">
-       
-    </div> 
-    <br>
+<style>
+    /* Custom styles for the Bootstrap Carousel */
+    #productCarousel {
+        max-height: 500px; /* Set the maximum height as per your design */
+        overflow: hidden; /* Hide any overflow beyond the specified height */
+    }
+
+    #productCarousel .carousel-inner {
+        height: 100%; /* Set the height to 100% to fill the container */
+    }
+
+    #productCarousel img {
+        object-fit: cover; /* Make sure the image covers the entire container */
+        height: 100%; /* Make the image height 100% of the container */
+        width: 100%; /* Make the image width 100% of the container */
+    }
+
+    /* Custom style for the sorting button */
+    #sortingButton {
+        margin-bottom: 10px;
+    }
+
+    .btn-group {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .btn-primary {
+        padding: 8px 10px;
+        font-size: 16px;
+    }
+    
+    .dropdown-menu {
+        min-width: 100%;
+    }
+    
+    .dropdown-item {
+        font-size: 16px;
+        padding: 10px 20px;
+    }
+    
+    /* Hover effect for dropdown items */
+    .dropdown-item:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+</style>
+
+<div class="container mt-5 pt-5 mb-5">
+    <!-- Sıralama Butonu -->
     <div class="row">
+        <div class="col-md-12">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Sırala
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#" onclick="sortProducts('asc')">Artan</a>
+                    <a class="dropdown-item" href="#" onclick="sortProducts('desc')">Azalan</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carousel -->
+    <div id="productCarousel" class="carousel slide mt-5" data-ride="carousel">
+        <div class="carousel-inner">
+            {% for product in products %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img src="/media/{{ product.product_images.first.image }}" class="d-block w-100" alt="{{ product.product_name }}">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5><a href="{% url 'get_product' product.slug %}" class="text-white">{{ product.product_name }}</a></h5>
+                        <p class="text-white">${{ product.price }}.00</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <a class="carousel-control-prev" href="#productCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#productCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+
+    <!-- Ürünler -->
+    <div class="row mt-3" id="productList">
         {% for product in products %}
             <div class="col-md-3">
                 <figure class="card card-product-grid">
-                    <div class="img-wrap"> <img src="/media/{{ product.product_images.first.image }}"> </div>
+                    <div class="img-wrap"><img src="/media/{{ product.product_images.first.image }}"></div>
                     <figcaption class="info-wrap border-top">
                         <a href="{% url 'get_product' product.slug %}" class="title">
                             <b>{{ product.product_name }}</b>
                         </a>
-                        <div class="price mt-2">${{ product.price }}.00</div> <!-- price-wrap.// -->
+                        <div class="price mt-2">${{ product.price }}.00</div>
                     </figcaption>
-                </figure> <!-- card // -->
-            </div> <!-- col.// -->
+                </figure>
+            </div>
         {% endfor %}
     </div>
 </div>
+
+<!-- JavaScript for Sorting -->
+<script>
+    function sortProducts(order) {
+        var productList = document.getElementById('productList');
+        var products = productList.getElementsByClassName('col-md-3');
+
+        // Ürünleri diziye dönüştür
+        var productsArray = Array.from(products);
+
+        // Fiyata göre sırala
+        productsArray.sort(function (a, b) {
+            var productA = parseFloat(a.getElementsByClassName('price')[0].innerText.substring(1));
+            var productB = parseFloat(b.getElementsByClassName('price')[0].innerText.substring(1));
+
+            if (order === 'asc') {
+                return productA - productB;
+            } else {
+                return productB - productA;
+            }
+        });
+
+        // Sıralanmış ürünleri yerine yerleştir
+        for (var i = 0; i < productsArray.length; i++) {
+            productList.appendChild(productsArray[i]);
+        }
+    }
+</script>
+
 {% endblock %}
